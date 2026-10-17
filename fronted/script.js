@@ -114,9 +114,10 @@ function capturePhoto() {
 }
 
 let csrfToken = '';
+const BACKEND_API_URL = 'https://web-camera-cst9.onrender.com';
 
 // Kiem tra trang thai auth va lay CSRF token
-fetch('/api/auth/status')
+fetch(`${BACKEND_API_URL}/api/auth/status`)
     .then(res => res.json())
     .then(data => {
         if (data.logged_in && data.csrf_token) {
@@ -136,7 +137,7 @@ async function enhancePhoto() {
     btnEnhance.disabled = true;
 
     try {
-        const response = await fetch('enhance.php', {
+        const response = await fetch(`${BACKEND_API_URL}/api/enhance`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

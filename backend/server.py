@@ -155,11 +155,22 @@ class SecureAppHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('X-Frame-Options', 'DENY')
         self.send_header('X-XSS-Protection', '1; mode=block')
         self.send_header('Referrer-Policy', 'strict-origin-when-cross-origin')
-        self.send_header('Content-Security-Policy', "default-src 'self' data: blob: https://replicate.delivery https://*.replicate.delivery; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://replicate.delivery https://*.replicate.delivery;")
         self.send_header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
-        # 6. CORS GIOI HAN
-        self.send_header('Access-Control-Allow-Origin', f'http://localhost:{PORT}')
+        # 6. CORS CHO PHEP TU GITHUB PAGES VA LOCALHOST
+        origin = self.headers.get('Origin', '')
+        if origin.startswith('https://thucdz1610.github.io') or 'localhost' in origin or '127.0.0.1' in origin:
+            self.send_header('Access-Control-Allow-Origin', origin)
+            self.send_header('Access-Control-Allow-Credentials', 'true')
+        else:
+            self.send_header('Access-Control-Allow-Origin', '*')
+
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
         super().end_headers()
+
+    def do_OPTIONS(self):
+        self.send_response(204)
+        self.end_headers()
 
     def _get_client_ip(self):
         # Xu ly IP an toan
